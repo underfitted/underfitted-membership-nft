@@ -10,6 +10,14 @@ To setup your environment:
 npm install
 ```
 
+To setup your API keys and private keys create an `.env` file with the following content:
+
+```
+API_URL="<Alachemy HTTP URL>"
+PRIVATE_KEY="<deploy wallet private key>"
+EHTERSCAN_KEY="<Etherscan/Ployscan API key for verification>"
+```
+
 ## Develop
 
 The smart contract code is in [contracts/UnderfittedMembershipNFT.sol](/contracts/UnderfittedMembershipNFT.sol).

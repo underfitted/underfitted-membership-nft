@@ -57,3 +57,8 @@ To verify the smart contract:
 ```
 npm run deploy:verify -- <smart contract address>
 ```
+
+## Example
+
+The contract is deployed on the Polygon Mumbai test chain:
+[https://mumbai.polygonscan.com/address/0x1ddf3aC5e5e788FC3a5f4b4E628B5C6De9A1b1D7](https://mumbai.polygonscan.com/address/0x1ddf3aC5e5e788FC3a5f4b4E628B5C6De9A1b1D7)

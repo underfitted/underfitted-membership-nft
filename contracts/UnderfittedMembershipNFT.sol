@@ -38,6 +38,8 @@ contract UnderfittedMembershipNFT is ERC721, Pausable, Ownable {
         _tokenIdCounter.increment();
     }
 
+    function mintReserved() external {}
+
     function _beforeTokenTransfer(
         address from,
         address to,

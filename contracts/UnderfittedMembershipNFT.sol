@@ -12,6 +12,7 @@ contract UnderfittedMembershipNFT is ERC721, Pausable, Ownable {
     Counters.Counter private _tokenIdCounter;
 
     uint256 public constant MAX_SUPPLY = 10;
+    uint256 public constant RESERVED_SUPPLY = 3;
 
     constructor() ERC721("Underfitted Membership NFT", "UNDERFITTED") {}
 
@@ -31,11 +32,17 @@ contract UnderfittedMembershipNFT is ERC721, Pausable, Ownable {
         _unpause();
     }
 
-    function mint() external {
+    function mint() public {
         require(_tokenIdCounter.current() < MAX_SUPPLY, "Sold out");
 
         _safeMint(msg.sender, _tokenIdCounter.current());
         _tokenIdCounter.increment();
+    }
+
+    function mintReserved() external onlyOwner {
+        for (uint256 i = 0; i < RESERVED_SUPPLY; i++) {
+            mint();
+        }
     }
 
     function _beforeTokenTransfer(

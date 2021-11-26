@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <link href="tailwind.css" rel="stylesheet" />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Caveat+Brush&family=Gloria+Hallelujah&display=swap"
+            rel="stylesheet"
+        />
+        <style>
+            #main-element {
+                width: 1024px;
+                height: 1024px;
+                /* padding-top: 287px; */
+                padding-top: 200px;
+            }
+
+            #card {
+                width: 700px;
+                height: 450px;
+                box-shadow: 0px 0px 7px 2px rgba(255, 255, 255, 0.8);
+            }
+
+            .emboss {
+                text-shadow: 1px 2px 1px rgba(0, 0, 0, 0.3), -1px -2px 1px rgba(255, 255, 255, 0.3);
+            }
+        </style>
+    </head>
+
+    <body class="bg-gray-500 font-caveat">
+        <div id="main-element" class="bg-gradient-to-bl from-gray-800 to-black mx-auto">
+            <div id="card" class="card bg-white mx-auto rounded-xl">
+                <p class="text-center text-white text-3xl mx-auto pt-3 emboss">MEMBER CARD</p>
+                <p class="text-center text-white mx-auto emboss" style="font-size: 7.2rem">UNDERFITTED</p>
+                <p class="text-right text-white text-7xl mx-auto pr-16 emboss">Social Club</p>
+                <p
+                    id="number"
+                    class="text-right text-white text-5xl mx-auto pr-16 mt-12"
+                    style="font-family: 'Courier New', Courier, monospace"
+                >
+                    #712
+                </p>
+            </div>
+        </div>
+
+        <script>
+            // Original image params: index.html?number=712&rotatey=15&rotatez=5&rotategrad=-134&color1=75f8d2&color2=6096db&color3=2ae3fc
+
+            const urlSearchParams = new URLSearchParams(window.location.search);
+            const params = Object.fromEntries(urlSearchParams.entries());
+
+            document.getElementById(
+                "card"
+            ).style.transform = `perspective(50cm) rotatey(${params.rotatey}deg) rotatez(${params.rotatez}deg)`;
+
+            document.getElementById(
+                "card"
+            ).style.background = `linear-gradient(${params.rotategrad}deg, #${params.color1} 0%, #${params.color2} 50%, #${params.color3} 100%)`;
+
+            document.getElementById("number").innerHTML = `#${params.number}`;
+        </script>
+    </body>
+</html>

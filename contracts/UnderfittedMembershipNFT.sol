@@ -19,9 +19,9 @@ contract UnderfittedMembershipNFT is ERC721, Pausable, Ownable {
     uint256 public constant SUPPLY_LIMIT_3 = 9;
 
     uint256 public constant SUPPLY_PRICE_0 = 0;
-    uint256 public constant SUPPLY_PRICE_1 = 50 ether;
-    uint256 public constant SUPPLY_PRICE_2 = 70 ether;
-    uint256 public constant SUPPLY_PRICE_3 = 90 ether;
+    uint256 public constant SUPPLY_PRICE_1 = 50000 gwei;
+    uint256 public constant SUPPLY_PRICE_2 = 70000 gwei;
+    uint256 public constant SUPPLY_PRICE_3 = 90000 gwei;
 
     constructor() ERC721("Underfitted Membership NFT", "UNDERFITTED") {
         for (uint256 i = 0; i < RESERVED_SUPPLY; i++) {

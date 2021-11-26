@@ -5,7 +5,6 @@ describe("UnderfittedMembershipNFT", () => {
     let contract;
     let owner;
     let addr1;
-    let addr2;
 
     beforeEach(async function () {
         UnderfittedMembershipNFT = await ethers.getContractFactory("UnderfittedMembershipNFT");

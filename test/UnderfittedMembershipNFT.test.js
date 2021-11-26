@@ -99,6 +99,17 @@ describe("UnderfittedMembershipNFT", () => {
         }
     });
 
+    it("should throw went price is wrong", async () => {
+        try {
+            await contract.mint({ value: (await contract.getPrice()) + 1 });
+            expect.fail("Should not allow to mint with wrong price");
+        } catch (error) {
+            expect(error.message).to.equal(
+                "VM Exception while processing transaction: reverted with reason string 'Incorrect price'"
+            );
+        }
+    });
+
     it("should set the correct price", async () => {
         for (let i = 0; i < (await contract.MAX_SUPPLY()); i++) {
             const price = await contract.getPrice();

@@ -5,6 +5,7 @@ async function main() {
     console.log("Account balance:", (await deployer.getBalance()).toString());
 
     const UnderfittedMembershipNFT = await ethers.getContractFactory("UnderfittedMembershipNFT");
+
     const contract = await UnderfittedMembershipNFT.deploy();
 
     console.log("Contract address:", contract.address);

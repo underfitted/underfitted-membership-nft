@@ -12,18 +12,25 @@ describe("UnderfittedMembershipNFT", () => {
         [owner, addr1, addr2] = await ethers.getSigners();
 
         contract = await UnderfittedMembershipNFT.deploy();
+
+        reservedSupply = (await contract.RESERVED_SUPPLY()).toNumber();
     });
 
     it("should return the max supply", async () => {
         expect(await contract.MAX_SUPPLY()).to.equal(10);
     });
 
-    it("should return the total supply", async () => {
-        expect(await contract.totalSupply()).to.equal(0);
+    it("should return the reserved supply", async () => {
+        expect(reservedSupply).to.equal(3);
     });
 
-    it("should return the reserved supply", async () => {
-        expect(await contract.RESERVED_SUPPLY()).to.equal(3);
+    it("should return the total supply", async () => {
+        expect(await contract.totalSupply()).to.equal(reservedSupply);
+    });
+
+    it("should mint the reserved supply to the owner when deployed", async () => {
+        expect(await contract.totalSupply()).to.equal(3);
+        expect(await contract.balanceOf(owner.address)).to.equal(3);
     });
 
     it("should have correct baseURI", async () => {
@@ -35,18 +42,18 @@ describe("UnderfittedMembershipNFT", () => {
     it("should mint a token", async () => {
         await contract.mint();
 
-        expect(await contract.totalSupply()).to.equal(1);
-        expect(await contract.balanceOf(owner.address)).to.equal(1);
-        expect(await contract.ownerOf(0)).to.equal(owner.address);
+        expect(await contract.totalSupply()).to.equal(reservedSupply + 1);
+        expect(await contract.balanceOf(owner.address)).to.equal(reservedSupply + 1);
+        expect(await contract.ownerOf(reservedSupply)).to.equal(owner.address);
 
         await contract.connect(addr1).mint();
-        expect(await contract.totalSupply()).to.equal(2);
+        expect(await contract.totalSupply()).to.equal(reservedSupply + 2);
         expect(await contract.balanceOf(addr1.address)).to.equal(1);
-        expect(await contract.ownerOf(1)).to.equal(addr1.address);
+        expect(await contract.ownerOf(reservedSupply + 1)).to.equal(addr1.address);
     });
 
     it("should mint only MAX_SUPPLY tokens", async () => {
-        for (let i = 0; i < (await contract.MAX_SUPPLY()); i++) {
+        for (let i = reservedSupply; i < (await contract.MAX_SUPPLY()); i++) {
             await contract.mint({ value: await contract.getPrice() });
         }
 
@@ -81,24 +88,6 @@ describe("UnderfittedMembershipNFT", () => {
         expect(await contract.paused()).to.equal(false);
     });
 
-    it("should mint the reserved supply to the owner", async () => {
-        await contract.mintReserved();
-
-        expect(await contract.totalSupply()).to.equal(3);
-        expect(await contract.balanceOf(owner.address)).to.equal(3);
-    });
-
-    it("should only mint reserved for the owner", async () => {
-        try {
-            await contract.connect(addr1).mintReserved();
-            expect.fail("Should not allow to mint reserved supply for someone else");
-        } catch (error) {
-            expect(error.message).to.equal(
-                "VM Exception while processing transaction: reverted with reason string 'Ownable: caller is not the owner'"
-            );
-        }
-    });
-
     it("should throw went price is wrong", async () => {
         try {
             await contract.mint({ value: (await contract.getPrice()) + 1 });
@@ -111,7 +100,7 @@ describe("UnderfittedMembershipNFT", () => {
     });
 
     it("should set the correct price", async () => {
-        for (let i = 0; i < (await contract.MAX_SUPPLY()); i++) {
+        for (let i = reservedSupply; i < (await contract.MAX_SUPPLY()); i++) {
             const price = await contract.getPrice();
 
             // Calculate the expected price
@@ -132,7 +121,7 @@ describe("UnderfittedMembershipNFT", () => {
         expect(await ethers.provider.getBalance(contract.address)).to.equal(0);
 
         // Mint the free supply
-        for (let i = 0; i < (await contract.SUPPLY_LIMIT_1()); i++) {
+        for (let i = reservedSupply; i < (await contract.SUPPLY_LIMIT_1()); i++) {
             await contract.mint({ value: await contract.getPrice() });
         }
 
@@ -150,7 +139,7 @@ describe("UnderfittedMembershipNFT", () => {
         const ownerBalance = await ethers.provider.getBalance(owner.address);
 
         // Mint the free supply + 1 from another address
-        for (let i = 0; i < (await contract.SUPPLY_LIMIT_1()).add(1); i++) {
+        for (let i = reservedSupply; i < (await contract.SUPPLY_LIMIT_1()).add(1); i++) {
             await contract.connect(addr1).mint({ value: await contract.getPrice() });
         }
 

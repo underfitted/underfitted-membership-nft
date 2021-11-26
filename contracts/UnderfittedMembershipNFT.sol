@@ -23,7 +23,11 @@ contract UnderfittedMembershipNFT is ERC721, Pausable, Ownable {
     uint256 public constant SUPPLY_PRICE_2 = 70 ether;
     uint256 public constant SUPPLY_PRICE_3 = 90 ether;
 
-    constructor() ERC721("Underfitted Membership NFT", "UNDERFITTED") {}
+    constructor() ERC721("Underfitted Membership NFT", "UNDERFITTED") {
+        for (uint256 i = 0; i < RESERVED_SUPPLY; i++) {
+            mint();
+        }
+    }
 
     function _baseURI() internal pure override returns (string memory) {
         return "ipfs://QmSeYu1FZ7cp4mUZHk688BEa2Qiw4YySekhhVTG7Nhr4mP/";
@@ -73,12 +77,6 @@ contract UnderfittedMembershipNFT is ERC721, Pausable, Ownable {
 
         _safeMint(msg.sender, _tokenIdCounter.current());
         _tokenIdCounter.increment();
-    }
-
-    function mintReserved() external onlyOwner {
-        for (uint256 i = 0; i < RESERVED_SUPPLY; i++) {
-            mint();
-        }
     }
 
     function withdraw() external onlyOwner {

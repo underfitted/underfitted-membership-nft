@@ -47,6 +47,18 @@ contract UnderfittedMembershipNFT is ERC721, Pausable, Ownable {
         }
     }
 
+    function getSupplyAndPrice()
+        external
+        view
+        returns (
+            uint256,
+            uint256,
+            uint256
+        )
+    {
+        return (MAX_SUPPLY, _tokenIdCounter.current(), getPrice());
+    }
+
     function pause() external onlyOwner {
         _pause();
     }

@@ -160,4 +160,11 @@ describe("UnderfittedMembershipNFT", () => {
             );
         }
     });
+
+    it("should return max supply, total supply and price", async () => {
+        const [maxSupply, totalSupply, price] = await contract.getSupplyAndPrice();
+        expect(maxSupply).to.equal(await contract.MAX_SUPPLY());
+        expect(totalSupply).to.equal(await contract.totalSupply());
+        expect(price).to.equal(await contract.getPrice());
+    });
 });

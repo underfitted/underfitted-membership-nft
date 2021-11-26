@@ -1,4 +1,5 @@
 const { expect } = require("chai");
+const { ethers } = require("hardhat");
 
 describe("UnderfittedMembershipNFT", () => {
     let UnderfittedMembershipNFT;
@@ -133,12 +134,29 @@ describe("UnderfittedMembershipNFT", () => {
         // Balance should be the price of the last mint
         expect(await ethers.provider.getBalance(contract.address)).to.equal(await contract.SUPPLY_PRICE_1());
     });
+
+    it("should withdraw proceeds", async () => {
+        const ownerBalance = await ethers.provider.getBalance(owner.address);
+
+        // Mint the free supply + 1 from another address
+        for (let i = 0; i < (await contract.SUPPLY_LIMIT_1()).add(1); i++) {
+            await contract.connect(addr1).mint({ value: await contract.getPrice() });
+        }
+
+        // Withdraw the proceeds
+        await contract.withdraw();
+
+        // New balance should be greater than the old one
+        expect(await ethers.provider.getBalance(owner.address)).to.gt(ownerBalance);
+    });
+
+    it("should withdraw proceeds only to the owner", async () => {
         try {
-            await contract.mintReserved();
-            expect.fail("Should not allow to mint reserved if not enough available");
+            await contract.connect(addr1).withdraw();
+            expect.fail("Should not allow withdraw for someone else");
         } catch (error) {
             expect(error.message).to.equal(
-                "VM Exception while processing transaction: reverted with reason string 'Sold out'"
+                "VM Exception while processing transaction: reverted with reason string 'Ownable: caller is not the owner'"
             );
         }
     });

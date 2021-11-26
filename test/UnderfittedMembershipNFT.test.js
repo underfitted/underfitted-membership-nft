@@ -46,11 +46,11 @@ describe("UnderfittedMembershipNFT", () => {
 
     it("should mint only MAX_SUPPLY tokens", async () => {
         for (let i = 0; i < (await contract.MAX_SUPPLY()); i++) {
-            await contract.mint();
+            await contract.mint({ value: await contract.getPrice() });
         }
 
         try {
-            await contract.mint();
+            await contract.mint({ value: await contract.getPrice() });
             expect.fail("Should not allow to mint more than MAX_SUPPLY");
         } catch (error) {
             expect(error.message).to.equal(
@@ -98,14 +98,41 @@ describe("UnderfittedMembershipNFT", () => {
         }
     });
 
-    it("should only mint reserved if enough left", async () => {
-        const reservedSupply = await contract.RESERVED_SUPPLY();
-        const maxSupply = await contract.MAX_SUPPLY();
+    it("should set the correct price", async () => {
+        for (let i = 0; i < (await contract.MAX_SUPPLY()); i++) {
+            const price = await contract.getPrice();
 
-        for (let i = 0; i < maxSupply - reservedSupply + 1; i++) {
-            await contract.mint();
+            // Calculate the expected price
+            let expectedPrice = 0;
+            if (i < (await contract.SUPPLY_LIMIT_1())) expectedPrice = await contract.SUPPLY_PRICE_0();
+            else if (i < (await contract.SUPPLY_LIMIT_2())) expectedPrice = await contract.SUPPLY_PRICE_1();
+            else if (i < (await contract.SUPPLY_LIMIT_3())) expectedPrice = await contract.SUPPLY_PRICE_2();
+            else expectedPrice = await contract.SUPPLY_PRICE_3();
+
+            expect(price).to.equal(expectedPrice);
+
+            await contract.mint({ value: price });
+        }
+    });
+
+    it("should store proceeds", async () => {
+        // Start with 0
+        expect(await ethers.provider.getBalance(contract.address)).to.equal(0);
+
+        // Mint the free supply
+        for (let i = 0; i < (await contract.SUPPLY_LIMIT_1()); i++) {
+            await contract.mint({ value: await contract.getPrice() });
         }
 
+        // Balance should still be 0
+        expect(await ethers.provider.getBalance(contract.address)).to.equal(0);
+
+        // Mint one more
+        await contract.mint({ value: await contract.getPrice() });
+
+        // Balance should be the price of the last mint
+        expect(await ethers.provider.getBalance(contract.address)).to.equal(await contract.SUPPLY_PRICE_1());
+    });
         try {
             await contract.mintReserved();
             expect.fail("Should not allow to mint reserved if not enough available");

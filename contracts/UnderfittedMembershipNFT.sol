@@ -14,6 +14,15 @@ contract UnderfittedMembershipNFT is ERC721, Pausable, Ownable {
     uint256 public constant MAX_SUPPLY = 10;
     uint256 public constant RESERVED_SUPPLY = 3;
 
+    uint256 public constant SUPPLY_LIMIT_1 = 5;
+    uint256 public constant SUPPLY_LIMIT_2 = 7;
+    uint256 public constant SUPPLY_LIMIT_3 = 9;
+
+    uint256 public constant SUPPLY_PRICE_0 = 0;
+    uint256 public constant SUPPLY_PRICE_1 = 50 ether;
+    uint256 public constant SUPPLY_PRICE_2 = 70 ether;
+    uint256 public constant SUPPLY_PRICE_3 = 90 ether;
+
     constructor() ERC721("Underfitted Membership NFT", "UNDERFITTED") {}
 
     function _baseURI() internal pure override returns (string memory) {
@@ -24,6 +33,20 @@ contract UnderfittedMembershipNFT is ERC721, Pausable, Ownable {
         return _tokenIdCounter.current();
     }
 
+    function getPrice() public view returns (uint256) {
+        uint256 tokenID = _tokenIdCounter.current();
+
+        if (tokenID < SUPPLY_LIMIT_1) {
+            return SUPPLY_PRICE_0;
+        } else if (tokenID < SUPPLY_LIMIT_2) {
+            return SUPPLY_PRICE_1;
+        } else if (tokenID < SUPPLY_LIMIT_3) {
+            return SUPPLY_PRICE_2;
+        } else {
+            return SUPPLY_PRICE_3;
+        }
+    }
+
     function pause() external onlyOwner {
         _pause();
     }
@@ -32,8 +55,9 @@ contract UnderfittedMembershipNFT is ERC721, Pausable, Ownable {
         _unpause();
     }
 
-    function mint() public {
+    function mint() public payable {
         require(_tokenIdCounter.current() < MAX_SUPPLY, "Sold out");
+        require(msg.value == getPrice(), "Incorrect price");
 
         _safeMint(msg.sender, _tokenIdCounter.current());
         _tokenIdCounter.increment();

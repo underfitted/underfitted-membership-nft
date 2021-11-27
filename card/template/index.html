@@ -33,7 +33,7 @@
                 <table class="mx-auto" style="width: 600px;">
                     <tr>
                         <td rowspan="3">
-                            <img id="logo" src="logo.png" width="200px" />
+                            <img id="doodle" src="doodles/doodle1.png" width="220px" />
                         </td>
                         <td class="text-right">
                             <p class="text-right text-white text-7xl emboss" style="line-height: 0.2;">Social Club</p>
@@ -71,6 +71,7 @@
                 "card"
             ).style.background = `linear-gradient(${params.rotategrad}deg, #${params.color1} 0%, #${params.color2} 50%, #${params.color3} 100%)`;
 
+            document.getElementById("doodle").src = `doodles/doodle${params.doodle}.png`;
             document.getElementById("number").innerHTML = `#${params.number}`;
             document.getElementById("color").innerHTML = `0x${params.color1}${params.color2}${params.color3}`;
         </script>

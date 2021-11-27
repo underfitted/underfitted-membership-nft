@@ -10,7 +10,6 @@
             #main-element {
                 width: 1024px;
                 height: 1024px;
-                /* padding-top: 287px; */
                 padding-top: 200px;
             }
 
@@ -29,16 +28,13 @@
     <body class="bg-gray-500 font-caveat">
         <div id="main-element" class="bg-gradient-to-bl from-gray-800 to-black mx-auto">
             <div id="card" class="card bg-white mx-auto rounded-xl">
-                <p class="text-center text-white text-3xl mx-auto pt-3 emboss">MEMBER CARD</p>
+                <p class="text-center text-white text-3xl mx-auto pt-3 emboss">MEMBERSHIP</p>
                 <p class="text-center text-white mx-auto emboss" style="font-size: 7.2rem">UNDERFITTED</p>
                 <p class="text-right text-white text-7xl mx-auto pr-16 emboss">Social Club</p>
-                <p
-                    id="number"
-                    class="text-right text-white text-5xl mx-auto pr-16 mt-12"
-                    style="font-family: 'Courier New', Courier, monospace"
-                >
-                    #712
-                </p>
+                <div class="mt-10 text-right text-white" style="font-family: 'Courier New', Courier, monospace">
+                    <p id="color" class="text-2xl text-gray-600 inline-block align-middle">0xff1232</p>
+                    <p id="number" class="text-5xl inline-block ml-8 mr-16 font-bold text-right align-middle text-gray-100" style="-webkit-text-stroke: 1px rgb(112, 112, 112);">#712</p>
+                </div>
             </div>
         </div>
 
@@ -57,6 +53,7 @@
             ).style.background = `linear-gradient(${params.rotategrad}deg, #${params.color1} 0%, #${params.color2} 50%, #${params.color3} 100%)`;
 
             document.getElementById("number").innerHTML = `#${params.number}`;
+            document.getElementById("color").innerHTML = `0x${params.color1}${params.color2}${params.color3}`;
         </script>
     </body>
 </html>

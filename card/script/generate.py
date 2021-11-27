@@ -46,7 +46,7 @@ def main():
     driver = webdriver.Chrome(
         "card/script/driver/chromedriver", chrome_options=chrome_options)
 
-    for i in range(0, 100):
+    for i in range(0, 10):
         random.seed(i)
 
         rotatey = random.randint(-20, 20)

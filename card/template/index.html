@@ -14,8 +14,8 @@
             }
 
             #card {
-                width: 700px;
-                height: 450px;
+                width: 450px;
+                height: 600px;
                 box-shadow: 0px 0px 7px 2px rgba(255, 255, 255, 0.8);
             }
 
@@ -27,30 +27,20 @@
 
     <body class="bg-gray-500 font-caveat">
         <div id="main-element" class="bg-gradient-to-bl from-gray-800 to-black mx-auto">
-            <div id="card" class="card bg-white mx-auto rounded-xl">
-                <p class="text-center text-white text-3xl mx-auto pt-3 emboss">FOUNDER CARD</p>
-                <p class="text-center text-white mx-auto emboss" style="font-size: 7.2rem">UNDERFITTED</p>
-                <table class="mx-auto" style="width: 600px;">
-                    <tr>
-                        <td rowspan="3">
-                            <img id="doodle" src="../images/pfp/0000000000000000.png" width="220px" />
-                        </td>
-                        <td class="text-right">
-                            <p class="text-right text-white text-7xl emboss" style="line-height: 0.2;">Social Club</p>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="text-right">
-                            <p id="color" class="text-2xl text-white mt-10" style="font-family: 'Courier New', Courier, monospace">0xff1232</p>
-                        </td>
-                    </tr>
-                </table>
+            <div id="card" class="card bg-white mx-auto rounded-xl text-center ">
+                <p class="text-center text-white text-3xl mx-auto pt-3 emboss">MEMBER CARD</p>
+                <div class="text-center">
+                    <img id="doodle" class="text-center inline-block" src="../pfp/0000000000000000.png" width="300px" />
+                </div>
+                
+                <p class="text-white mx-auto emboss text-4xl">UNDERFITTED SOCIAL CLUB</p>
+                <p class="text-white mx-auto text-3xl emboss">Founding membership</p>
+                <p class="text-xl text-white mt-2" style="font-family: 'Courier New', Courier, monospace">EST 2021. <span id="number">120</span> of 1000</p>
+                <p id="color" class="text-2xl text-white mt-10" style="font-family: 'Courier New', Courier, monospace">0xff1232</p>
             </div>
         </div>
 
         <script>
-            // Original image params: index.html?number=712&rotatey=15&rotatez=5&rotategrad=-134&color1=75f8d2&color2=6096db&color3=2ae3fc
-
             const urlSearchParams = new URLSearchParams(window.location.search);
             const params = Object.fromEntries(urlSearchParams.entries());
 
@@ -62,7 +52,8 @@
                 "card"
             ).style.background = `linear-gradient(${params.rotategrad}deg, #${params.color1} 0%, #${params.color2} 50%, #${params.color3} 100%)`;
 
-            document.getElementById("doodle").src = `../images/pfp/${params.doodle}`;
+            document.getElementById("number").innerHTML = `${params.number}`;
+            document.getElementById("doodle").src = `../pfp/${params.doodle}`;
             document.getElementById("color").innerHTML = `0x${params.color1}${params.color2}${params.color3}`;
         </script>
     </body>

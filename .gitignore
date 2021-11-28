@@ -9,3 +9,5 @@ coverage.json
 card/images/*.png
 .venv
 .vscode
+card/pfp/*.png
+card/pfp/*.json

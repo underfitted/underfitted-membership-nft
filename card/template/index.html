@@ -8,9 +8,9 @@
         />
         <style>
             #main-element {
-                width: 1024px;
-                height: 1024px;
-                padding-top: 200px;
+                width: 590px;
+                height: 740px;
+                padding-top: 70px;
             }
 
             #card {
@@ -29,8 +29,8 @@
         <div id="main-element" class="bg-gradient-to-bl from-gray-800 to-black mx-auto">
             <div id="card" class="card bg-white mx-auto rounded-xl text-center ">
                 <p class="text-center text-white text-3xl mx-auto pt-3 emboss">MEMBER CARD</p>
-                <div class="text-center">
-                    <img id="doodle" class="text-center inline-block" src="../pfp/0000000000000000.png" width="300px" />
+                <div class="text-center mt-8">
+                    <img id="doodle" class="text-center inline-block" src="../pfp/0000000000010000.png" width="300px" />
                 </div>
                 
                 <p class="text-white mx-auto emboss text-4xl">UNDERFITTED SOCIAL CLUB</p>
@@ -43,10 +43,6 @@
         <script>
             const urlSearchParams = new URLSearchParams(window.location.search);
             const params = Object.fromEntries(urlSearchParams.entries());
-
-            document.getElementById(
-                "card"
-            ).style.transform = `perspective(50cm) rotatey(${params.rotatey}deg) rotatez(${params.rotatez}deg)`;
 
             document.getElementById(
                 "card"

@@ -1021,7 +1021,7 @@ def main():
     doodles = os.listdir("card/pfp/")
     np.random.shuffle(doodles)
 
-    for i in range(0, 1000):
+    for i in range(0, 10):
         random.seed(i)
 
         rotatey = random.randint(-20, 20)

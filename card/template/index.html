@@ -28,12 +28,12 @@
     <body class="bg-gray-500 font-caveat">
         <div id="main-element" class="bg-gradient-to-bl from-gray-800 to-black mx-auto">
             <div id="card" class="card bg-white mx-auto rounded-xl">
-                <p class="text-center text-white text-3xl mx-auto pt-3 emboss">MEMBER CARD</p>
+                <p class="text-center text-white text-3xl mx-auto pt-3 emboss">FOUNDER CARD</p>
                 <p class="text-center text-white mx-auto emboss" style="font-size: 7.2rem">UNDERFITTED</p>
                 <table class="mx-auto" style="width: 600px;">
                     <tr>
                         <td rowspan="3">
-                            <img id="doodle" src="doodles/doodle1.png" width="220px" />
+                            <img id="doodle" src="../images/pfp/0000000000000000.png" width="220px" />
                         </td>
                         <td class="text-right">
                             <p class="text-right text-white text-7xl emboss" style="line-height: 0.2;">Social Club</p>
@@ -44,16 +44,7 @@
                             <p id="color" class="text-2xl text-white mt-10" style="font-family: 'Courier New', Courier, monospace">0xff1232</p>
                         </td>
                     </tr>
-                    <tr>
-                        <td class="text-right">
-                            <p id="number" class="text-5xl font-bold text-gray-100" style="font-family: 'Courier New', Courier, monospace; -webkit-text-stroke: 1px rgb(112, 112, 112);">#712</p>
-                        </td>
-                    </tr>
                 </table>
-                <div>
-                    <div>
-                    </div>
-                </div>
             </div>
         </div>
 
@@ -71,8 +62,7 @@
                 "card"
             ).style.background = `linear-gradient(${params.rotategrad}deg, #${params.color1} 0%, #${params.color2} 50%, #${params.color3} 100%)`;
 
-            document.getElementById("doodle").src = `doodles/doodle${params.doodle}.png`;
-            document.getElementById("number").innerHTML = `#${params.number}`;
+            document.getElementById("doodle").src = `../images/pfp/${params.doodle}`;
             document.getElementById("color").innerHTML = `0x${params.color1}${params.color2}${params.color3}`;
         </script>
     </body>

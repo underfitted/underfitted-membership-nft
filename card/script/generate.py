@@ -2,6 +2,9 @@ from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from pathlib import Path
 import random
+import os
+import numpy as np
+
 
 # Source: https://venngage.com/blog/pastel-color-palettes/#1
 # COLOR_PALETTE_POOL = [
@@ -1023,8 +1026,6 @@ COLOR_PALETTE_POOL = [
     ["a8ab9b", "172a38", "ec4b5d", "f48773", "e0c590"],
 ]
 
-DOODLE_COUNT = 220
-
 def screenshot(driver, number, rotatey, rotatez, rotategrad, color1, color2, color3, doodle):
     page_path = Path("card/template/index.html")
     page_url = f"file://{page_path.resolve()}?number={number}&rotatey={rotatey}&rotatez={rotatez}&rotategrad={rotategrad}&color1={color1}&color2={color2}&color3={color3}&doodle={doodle}"
@@ -1035,7 +1036,6 @@ def screenshot(driver, number, rotatey, rotatez, rotategrad, color1, color2, col
     element = driver.find_element_by_id("main-element")
     element.screenshot(f"card/images/{number:03d}.png")
 
-
 def main():
     chrome_options = Options()
     chrome_options.add_argument("--start-maximized")
@@ -1043,13 +1043,18 @@ def main():
         "card/script/driver/chromedriver", chrome_options=chrome_options
     )
 
+    doodles = os.listdir("card/images/pfp/")
+    np.random.shuffle(doodles)
+
+    print(doodles)
+
     for i in range(0, 10):
         random.seed(i)
 
         rotatey = random.randint(-20, 20)
         rotatez = random.randint(-10, 10)
         rotategrad = random.randint(0, 359)
-        doodle = random.randint(1, DOODLE_COUNT)
+        doodle = np.random.choice(doodles, size=1, replace=False)[0]
 
         palette = random.sample(COLOR_PALETTE_POOL, 1)[0]
         random.shuffle(palette)

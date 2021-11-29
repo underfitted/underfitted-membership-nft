@@ -29,8 +29,8 @@ describe("UnderfittedMembershipNFT", () => {
     });
 
     it("should mint the reserved supply to the owner when deployed", async () => {
-        expect(await contract.totalSupply()).to.equal(3);
-        expect(await contract.balanceOf(owner.address)).to.equal(3);
+        expect(await contract.totalSupply()).to.equal(reservedSupply);
+        expect(await contract.balanceOf(owner.address)).to.equal(reservedSupply);
     });
 
     it("should have correct baseURI", async () => {

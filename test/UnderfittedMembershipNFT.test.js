@@ -88,7 +88,7 @@ describe("UnderfittedMembershipNFT", () => {
         expect(await contract.paused()).to.equal(false);
     });
 
-    it("should throw went price is wrong", async () => {
+    it("should raise error when price is wrong", async () => {
         try {
             await contract.mint({ value: (await contract.getPrice()) + 1 });
             expect.fail("Should not allow to mint with wrong price");

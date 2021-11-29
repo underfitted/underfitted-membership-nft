@@ -393,7 +393,6 @@ COLOR_PALETTE_POOL = [
     ["f9f6ec", "88a1a8", "502940", "790614", "0d0c0c"],
     ["ffab03", "fc7f03", "fc3903", "d1024e", "a6026c"],
     ["50232e", "f77c3e", "faba66", "fce185", "a2cca5"],
-    ["f9ebf2", "f3e2e8", "fcd7da", "f58f9a", "3c363b"],
     ["ffffff", "a1ac88", "757575", "464d70", "000000"],
     ["736558", "fd65a0", "fef5c6", "aaf2e4", "31d5de"],
     ["f7f6e4", "e2d5c1", "5f3711", "f6f6e2", "d4c098"],
@@ -750,7 +749,6 @@ COLOR_PALETTE_POOL = [
     ["3d0a49", "5015bd", "027fe9", "00caf8", "e0daf7"],
     ["edffb3", "99928e", "bfe3c3", "dbedc2", "fff2d4"],
     ["471754", "991d5d", "f2445e", "f07951", "dec87a"],
-    ["f2ecdc", "574345", "e3dacb", "c5ffe5", "f5eed4"],
     ["d4cdc5", "5b88a5", "f4f4f2", "191013", "243a69"],
     ["a6e094", "e8e490", "f07360", "bf2a7f", "5c3d5b"],
     ["622824", "2f0618", "412a9c", "1b66ff", "00cef5"],
@@ -782,7 +780,6 @@ COLOR_PALETTE_POOL = [
     ["260d33", "003f69", "106b87", "157a8c", "b3aca4"],
     ["d6ce8b", "8fd053", "02907d", "03453d", "2c1001"],
     ["402b30", "faddb4", "f4c790", "f2977e", "ba6868"],
-    ["f5e3ae", "fff5d6", "e1e6d3", "b1ccc4", "4e5861"],
     ["3b4344", "51615b", "bbbd91", "f06f6b", "f12f5d"],
     ["85b394", "a7ba59", "f0f0d8", "f0d890", "ae2f27"],
     ["af162a", "95003a", "830024", "5a0e3d", "44021e"],
@@ -1001,15 +998,64 @@ COLOR_PALETTE_POOL = [
     ["a8ab9b", "172a38", "ec4b5d", "f48773", "e0c590"],
 ]
 
-def screenshot(driver, number, rotatey, rotatez, rotategrad, color1, color2, color3, doodle):
+def load_doodles_from_directory(directory):
+    files = []
+    for filename in sorted(os.listdir(directory)):
+        if filename.endswith(".png"):
+            files.append(filename)
+
+    return files
+
+def screenshot(
+    driver, number, rotatey, rotatez, rotategrad, color1, color2, color3, doodle, rare
+):
     page_path = Path("card/template/index.html")
-    page_url = f"file://{page_path.resolve()}?number={number}&rotatey={rotatey}&rotatez={rotatez}&rotategrad={rotategrad}&color1={color1}&color2={color2}&color3={color3}&doodle={doodle}"
+    page_url = f"file://{page_path.resolve()}?number={number}&rotatey={rotatey}&rotatez={rotatez}&rotategrad={rotategrad}&color1={color1}&color2={color2}&color3={color3}&doodle={doodle}&rare={rare}"
     print(page_url)
 
     driver.get(page_url)
 
     element = driver.find_element_by_id("main-element")
     element.screenshot(f"card/images/{number:03d}-{doodle}")
+
+
+def rare(driver):
+    files = [
+        "A tribute to CryptoPunk _7804.png",
+        "A tribute to BAYC.png",
+        "A tribute to Squiggle.png",
+        "A tribute to CrypToadz.png",
+        "A tribute to CryptoPunk _6529.png",
+        "A tribute to Doodles.png",
+        "A tribute to Fidenza.png",
+        "A tribute to Meebits.png",
+        "A tribute to Nouns.png",
+        "There's always an ape.png",
+    ]
+
+    for i, file in enumerate(files):
+        random.seed(i)
+
+        rotatey = random.randint(-20, 20)
+        rotatez = random.randint(-10, 10)
+        rotategrad = random.randint(0, 359)
+
+        palette = random.sample(COLOR_PALETTE_POOL, 1)[0]
+        random.shuffle(palette)
+
+        screenshot(
+            driver,
+            i + 1,
+            rotatey,
+            rotatez,
+            rotategrad,
+            palette[0],
+            palette[1],
+            palette[2],
+            file,
+            file[:-4],
+        )
+
 
 def main():
     chrome_options = Options()
@@ -1018,22 +1064,25 @@ def main():
         "card/script/driver/chromedriver", chrome_options=chrome_options
     )
 
-    doodles = os.listdir("card/pfp/")
+    doodles = load_doodles_from_directory("card/pfp/")
     np.random.shuffle(doodles)
 
-    for i in range(0, 10):
-        random.seed(i)
+    rare(driver)
+
+    for i in range(10, 1000):
+        random.seed(i * 42)
 
         rotatey = random.randint(-20, 20)
         rotatez = random.randint(-10, 10)
         rotategrad = random.randint(0, 359)
+
         doodle = np.random.choice(doodles, size=1, replace=False)[0]
 
         palette = random.sample(COLOR_PALETTE_POOL, 1)[0]
         random.shuffle(palette)
 
         screenshot(
-            driver, i + 1, rotatey, rotatez, rotategrad, palette[0], palette[1], palette[2], doodle
+            driver, i + 1, rotatey, rotatez, rotategrad, palette[0], palette[1], palette[2], doodle, ""
         )
 
     driver.close()

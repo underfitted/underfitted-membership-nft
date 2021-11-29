@@ -8,7 +8,7 @@
         />
         <style>
             #main-element {
-                width: 590px;
+                width: 740px;
                 height: 740px;
                 padding-top: 70px;
             }
@@ -33,10 +33,11 @@
                     <img id="doodle" class="text-center inline-block" src="../pfp/0000000000010000.png" width="300px" />
                 </div>
                 
-                <p class="text-white mx-auto emboss text-4xl">UNDERFITTED SOCIAL CLUB</p>
-                <p class="text-white mx-auto text-3xl emboss">Founding membership</p>
-                <p class="text-xl text-white mt-2" style="font-family: 'Courier New', Courier, monospace">EST 2021. <span id="number">120</span> of 1000</p>
-                <p id="color" class="text-2xl text-white mt-10" style="font-family: 'Courier New', Courier, monospace">0xff1232</p>
+                <p class="text-white mx-auto emboss text-4xl subpixel-antialiased">UNDERFITTED SOCIAL CLUB</p>
+                <p class="text-white mx-auto text-3xl emboss subpixel-antialiased">Founding membership</p>
+                <p class="text-xl text-white mt-2 subpixel-antialiased" style="font-family: 'Courier New', Courier, monospace">EST 2021. <span id="number">120</span> of 1000</p>
+                <p id="color" class="text-gray-800 mt-6 ml-8 mr-8 subpixel-antialiased pt-2 pb-2" style="font-family: 'Courier New', Courier, monospace; font-size: 18px; background-color: bisque;">0xff1232</p>
+                <p id="rare" class="text-sm text-white mt-1 subpixel-antialiased hidden" style="font-family: 'Courier New', Courier, monospace">A tribute to Fidenza</p>
             </div>
         </div>
 
@@ -48,8 +49,17 @@
                 "card"
             ).style.background = `linear-gradient(${params.rotategrad}deg, #${params.color1} 0%, #${params.color2} 50%, #${params.color3} 100%)`;
 
+            if (params.rare != "") {
+                document.getElementById("rare").innerHTML = `(${params.rare.replace(/_/g, "#")})`;
+                document.getElementById('rare').classList.remove('hidden')
+                document.getElementById("doodle").src = `../rare/${params.doodle}`;
+            }
+            else {
+                document.getElementById('rare').classList.add('hidden')
+                document.getElementById("doodle").src = `../pfp/${params.doodle}`;
+            }
+
             document.getElementById("number").innerHTML = `${params.number}`;
-            document.getElementById("doodle").src = `../pfp/${params.doodle}`;
             document.getElementById("color").innerHTML = `0x${params.color1}${params.color2}${params.color3}`;
         </script>
     </body>

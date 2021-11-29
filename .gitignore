@@ -11,3 +11,5 @@ card/images/*.png
 .vscode
 card/pfp/*.png
 card/pfp/*.json
+card/metadata/*
+!.empty

@@ -100,10 +100,16 @@ describe("UnderfittedSocialClubMembershipMock", () => {
     });
 
     it("should raise error when price is wrong", async () => {
-        // Expect minting with wrong price to fail
-        await expect(contract.mint({ value: (await contract.getPrice()) + 1 })).to.be.revertedWith(
+        // Expect minting with lower price to fail
+        await expect(contract.mint({ value: (await contract.getPrice()).sub(1) })).to.be.revertedWith(
             "VM Exception while processing transaction: reverted with reason string 'Incorrect price'"
         );
+
+        // Expect minting with higher price to pass
+        await expect(contract.mint({ value: (await contract.getPrice()).add(1) })).to.not.be.reverted;
+
+        // Expect minting with exact price to pass
+        await expect(contract.mint({ value: await contract.getPrice() })).to.not.be.reverted;
     });
 
     it("should set the correct price", async () => {

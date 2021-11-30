@@ -9,6 +9,7 @@ describe("UnderfittedSocialClubMembership", () => {
         1000,
         100,
         BigNumber.from("5000000000000000000"),
-        BigNumber.from("69000000000000000")
+        BigNumber.from("690000000000000000"),
+        10
     );
 });

@@ -35,8 +35,6 @@ describe("UnderfittedMembershipNFT", () => {
     });
 
     it("should have correct baseURI", async () => {
-        await contract.mint();
-
         expect(await contract.tokenURI(1)).to.equal("ipfs://QmSeYu1FZ7cp4mUZHk688BEa2Qiw4YySekhhVTG7Nhr4mP/1");
     });
 
@@ -97,18 +95,15 @@ describe("UnderfittedMembershipNFT", () => {
 
     it("should set the correct price", async () => {
         for (let i = reservedSupply; i < (await contract.MAX_SUPPLY()); i++) {
-            const price = await contract.getPrice();
-
             // Calculate the expected price
-            let expectedPrice = 0;
-            if (i < (await contract.SUPPLY_LIMIT_1())) expectedPrice = await contract.SUPPLY_PRICE_0();
-            else if (i < (await contract.SUPPLY_LIMIT_2())) expectedPrice = await contract.SUPPLY_PRICE_1();
-            else if (i < (await contract.SUPPLY_LIMIT_3())) expectedPrice = await contract.SUPPLY_PRICE_2();
-            else expectedPrice = await contract.SUPPLY_PRICE_3();
+            const totalSupply = await contract.totalSupply();
+            const expectedPrice = (500000 + (totalSupply - reservedSupply) * 50000) * 1e9;
 
-            expect(price).to.equal(expectedPrice);
+            // Compare to the actual price
+            expect((await contract.getPrice()).toNumber()).to.equal(expectedPrice);
 
-            await contract.mint({ value: price });
+            // Mint another token
+            await contract.mint({ value: await contract.getPrice() });
         }
     });
 
@@ -116,30 +111,18 @@ describe("UnderfittedMembershipNFT", () => {
         // Start with 0
         expect(await ethers.provider.getBalance(contract.address)).to.equal(0);
 
-        // Mint the free supply
-        for (let i = reservedSupply; i < (await contract.SUPPLY_LIMIT_1()); i++) {
-            await contract.mint({ value: await contract.getPrice() });
-        }
-
-        // Balance should still be 0
-        expect(await ethers.provider.getBalance(contract.address)).to.equal(0);
-
-        // Mint one more
+        // Mint one paid token
+        const price = await contract.getPrice();
         await contract.mint({ value: await contract.getPrice() });
 
         // Balance should be the price of the last mint
-        expect(await ethers.provider.getBalance(contract.address)).to.equal(await contract.SUPPLY_PRICE_1());
+        expect(await ethers.provider.getBalance(contract.address)).to.equal(price);
     });
 
     it("should withdraw proceeds", async () => {
         const ownerBalance = await ethers.provider.getBalance(owner.address);
 
-        // Mint the free supply from the owner
-        for (let i = reservedSupply; i < (await contract.SUPPLY_LIMIT_1()).add(1); i++) {
-            await contract.mint({ value: await contract.getPrice() });
-        }
-
-        // Mint one from another wallet
+        // Mint one paid token
         await contract.connect(addr1).mint({ value: await contract.getPrice() });
 
         // Withdraw the proceeds

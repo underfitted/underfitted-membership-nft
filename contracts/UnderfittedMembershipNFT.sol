@@ -14,18 +14,13 @@ contract UnderfittedMembershipNFT is ERC721, Pausable, Ownable {
     uint256 public constant MAX_SUPPLY = 10;
     uint256 public constant RESERVED_SUPPLY = 3;
 
-    uint256 public constant SUPPLY_LIMIT_1 = 5;
-    uint256 public constant SUPPLY_LIMIT_2 = 7;
-    uint256 public constant SUPPLY_LIMIT_3 = 9;
-
-    uint256 public constant SUPPLY_PRICE_0 = 0;
-    uint256 public constant SUPPLY_PRICE_1 = 500000 gwei;
-    uint256 public constant SUPPLY_PRICE_2 = 700000 gwei;
-    uint256 public constant SUPPLY_PRICE_3 = 900000 gwei;
+    uint256 public constant BASE_PRICE = 500000 gwei;
+    uint256 public constant PRICE_FACTOR = 50000 gwei;
 
     constructor() ERC721("Underfitted Membership NFT", "UNDERFITTED") {
         for (uint256 i = 0; i < RESERVED_SUPPLY; i++) {
-            mint();
+            _tokenIdCounter.increment();
+            _safeMint(msg.sender, _tokenIdCounter.current());
         }
     }
 
@@ -33,22 +28,12 @@ contract UnderfittedMembershipNFT is ERC721, Pausable, Ownable {
         return "ipfs://QmSeYu1FZ7cp4mUZHk688BEa2Qiw4YySekhhVTG7Nhr4mP/";
     }
 
-    function totalSupply() external view returns (uint256) {
+    function totalSupply() public view returns (uint256) {
         return _tokenIdCounter.current();
     }
 
     function getPrice() public view returns (uint256) {
-        uint256 tokenID = _tokenIdCounter.current();
-
-        if (tokenID < SUPPLY_LIMIT_1) {
-            return SUPPLY_PRICE_0;
-        } else if (tokenID < SUPPLY_LIMIT_2) {
-            return SUPPLY_PRICE_1;
-        } else if (tokenID < SUPPLY_LIMIT_3) {
-            return SUPPLY_PRICE_2;
-        } else {
-            return SUPPLY_PRICE_3;
-        }
+        return BASE_PRICE + (totalSupply() - RESERVED_SUPPLY) * PRICE_FACTOR;
     }
 
     function getSupplyAndPrice()
@@ -71,7 +56,7 @@ contract UnderfittedMembershipNFT is ERC721, Pausable, Ownable {
         _unpause();
     }
 
-    function mint() public payable {
+    function mint() external payable {
         require(_tokenIdCounter.current() < MAX_SUPPLY, "Sold out");
         require(msg.value == getPrice(), "Incorrect price");
         require(

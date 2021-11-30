@@ -41,7 +41,7 @@ module.exports = {
         });
 
         it("should have correct baseURI", async () => {
-            expect(await contract.tokenURI(1)).to.equal("ipfs://QmSgBw1evQTtACAFKFHaWvtysj6ywtwqmxjNcs7rsVqh8H/1");
+            expect(await contract.tokenURI(1)).to.equal("ipfs://QmWAr9UTxStCp1aSnMkCvd3SajWLz9UKXdJ1mjB5h8K1hS/1");
         });
 
         it("should mint a token", async () => {

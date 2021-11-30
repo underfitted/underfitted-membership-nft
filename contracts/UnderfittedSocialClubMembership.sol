@@ -35,7 +35,7 @@ contract UnderfittedSocialClubMembership is ERC721, Pausable, Ownable {
     }
 
     function _baseURI() internal pure override returns (string memory) {
-        return "ipfs://QmSgBw1evQTtACAFKFHaWvtysj6ywtwqmxjNcs7rsVqh8H/";
+        return "ipfs://QmWAr9UTxStCp1aSnMkCvd3SajWLz9UKXdJ1mjB5h8K1hS/";
     }
 
     function totalSupply() public view returns (uint256) {

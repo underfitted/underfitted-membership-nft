@@ -11,14 +11,24 @@ contract UnderfittedSocialClubMembership is ERC721, Pausable, Ownable {
 
     Counters.Counter private _tokenIdCounter;
 
-    uint256 public constant MAX_SUPPLY = 10;
-    uint256 public constant RESERVED_SUPPLY = 3;
+    function MAX_SUPPLY() public pure virtual returns (uint256) {
+        return 1000;
+    }
 
-    uint256 public constant BASE_PRICE = 500000 gwei;
-    uint256 public constant PRICE_FACTOR = 50000 gwei;
+    function RESERVED_SUPPLY() public pure virtual returns (uint256) {
+        return 100;
+    }
+
+    function BASE_PRICE() public pure virtual returns (uint256) {
+        return 5 ether;
+    }
+
+    function PRICE_FACTOR() public pure virtual returns (uint256) {
+        return 69000000 gwei;
+    }
 
     constructor() ERC721("Underfitted Social Club Membership", "UNDERFITTED") {
-        for (uint256 i = 0; i < RESERVED_SUPPLY; i++) {
+        for (uint256 i = 0; i < RESERVED_SUPPLY(); i++) {
             _tokenIdCounter.increment();
             _safeMint(msg.sender, _tokenIdCounter.current());
         }
@@ -33,7 +43,8 @@ contract UnderfittedSocialClubMembership is ERC721, Pausable, Ownable {
     }
 
     function getPrice() public view returns (uint256) {
-        return BASE_PRICE + (totalSupply() - RESERVED_SUPPLY) * PRICE_FACTOR;
+        return
+            BASE_PRICE() + (totalSupply() - RESERVED_SUPPLY()) * PRICE_FACTOR();
     }
 
     function getSupplyAndPrice()
@@ -45,7 +56,7 @@ contract UnderfittedSocialClubMembership is ERC721, Pausable, Ownable {
             uint256
         )
     {
-        return (MAX_SUPPLY, _tokenIdCounter.current(), getPrice());
+        return (MAX_SUPPLY(), _tokenIdCounter.current(), getPrice());
     }
 
     function pause() external onlyOwner {
@@ -57,7 +68,7 @@ contract UnderfittedSocialClubMembership is ERC721, Pausable, Ownable {
     }
 
     function mint() external payable {
-        require(_tokenIdCounter.current() < MAX_SUPPLY, "Sold out");
+        require(_tokenIdCounter.current() < MAX_SUPPLY(), "Sold out");
         require(msg.value == getPrice(), "Incorrect price");
         require(
             msg.sender == owner() || balanceOf(msg.sender) == 0,

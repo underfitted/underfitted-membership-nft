@@ -1,19 +1,32 @@
+const { BigNumber } = require("@ethersproject/bignumber");
 const { expect } = require("chai");
 const { ethers } = require("hardhat");
 
-function runTests() {
-    let UnderfittedSocialClubMembership;
+describe("UnderfittedSocialClubMembershipMock", () => {
+    let UnderfittedSocialClubMembershipMock;
     let contract;
     let owner;
     let addr1;
 
     beforeEach(async function () {
+        UnderfittedSocialClubMembershipMock = await ethers.getContractFactory("UnderfittedSocialClubMembershipMock");
+        [owner, addr1] = await ethers.getSigners();
+
+        contract = await UnderfittedSocialClubMembershipMock.deploy();
+
+        reservedSupply = (await contract.RESERVED_SUPPLY()).toNumber();
+    });
+
+    it("should return the correct constants in the real contract", async () => {
         UnderfittedSocialClubMembership = await ethers.getContractFactory("UnderfittedSocialClubMembership");
         [owner, addr1] = await ethers.getSigners();
 
-        contract = await UnderfittedSocialClubMembership.deploy();
+        realContract = await UnderfittedSocialClubMembership.deploy();
 
-        reservedSupply = (await contract.RESERVED_SUPPLY()).toNumber();
+        expect(await realContract.MAX_SUPPLY()).to.equal(1000);
+        expect(await realContract.RESERVED_SUPPLY()).to.equal(100);
+        expect(await realContract.BASE_PRICE()).to.equal(BigNumber.from("5000000000000000000"));
+        expect(await realContract.PRICE_FACTOR()).to.equal(BigNumber.from("69000000000000000"));
     });
 
     it("should return the max supply", async () => {
@@ -156,8 +169,4 @@ function runTests() {
             "VM Exception while processing transaction: reverted with reason string 'Only one token per wallet allowed'"
         );
     });
-}
-
-describe("UnderfittedMembershipNFT", () => {
-    runTests();
 });

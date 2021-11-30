@@ -75,8 +75,8 @@ contract UnderfittedMembershipNFT is ERC721, Pausable, Ownable {
         require(_tokenIdCounter.current() < MAX_SUPPLY, "Sold out");
         require(msg.value == getPrice(), "Incorrect price");
 
-        _safeMint(msg.sender, _tokenIdCounter.current());
         _tokenIdCounter.increment();
+        _safeMint(msg.sender, _tokenIdCounter.current());
     }
 
     function withdraw() external onlyOwner {

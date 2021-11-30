@@ -6,7 +6,7 @@ import "@openzeppelin/contracts/security/Pausable.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 
-contract UnderfittedMembershipNFT is ERC721, Pausable, Ownable {
+contract UnderfittedSocialClubMembership is ERC721, Pausable, Ownable {
     using Counters for Counters.Counter;
 
     Counters.Counter private _tokenIdCounter;
@@ -17,7 +17,7 @@ contract UnderfittedMembershipNFT is ERC721, Pausable, Ownable {
     uint256 public constant BASE_PRICE = 500000 gwei;
     uint256 public constant PRICE_FACTOR = 50000 gwei;
 
-    constructor() ERC721("Underfitted Membership NFT", "UNDERFITTED") {
+    constructor() ERC721("Underfitted Social Club Membership", "UNDERFITTED") {
         for (uint256 i = 0; i < RESERVED_SUPPLY; i++) {
             _tokenIdCounter.increment();
             _safeMint(msg.sender, _tokenIdCounter.current());

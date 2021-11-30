@@ -1,17 +1,17 @@
 const { expect } = require("chai");
 const { ethers } = require("hardhat");
 
-describe("UnderfittedMembershipNFT", () => {
-    let UnderfittedMembershipNFT;
+function runTests() {
+    let UnderfittedSocialClubMembership;
     let contract;
     let owner;
     let addr1;
 
     beforeEach(async function () {
-        UnderfittedMembershipNFT = await ethers.getContractFactory("UnderfittedMembershipNFT");
+        UnderfittedSocialClubMembership = await ethers.getContractFactory("UnderfittedSocialClubMembership");
         [owner, addr1] = await ethers.getSigners();
 
-        contract = await UnderfittedMembershipNFT.deploy();
+        contract = await UnderfittedSocialClubMembership.deploy();
 
         reservedSupply = (await contract.RESERVED_SUPPLY()).toNumber();
     });
@@ -156,4 +156,8 @@ describe("UnderfittedMembershipNFT", () => {
             "VM Exception while processing transaction: reverted with reason string 'Only one token per wallet allowed'"
         );
     });
+}
+
+describe("UnderfittedMembershipNFT", () => {
+    runTests();
 });

@@ -4,9 +4,9 @@ async function main() {
     console.log("Deploying contracts with the account:", deployer.address);
     console.log("Account balance:", (await deployer.getBalance()).toString());
 
-    const UnderfittedMembershipNFT = await ethers.getContractFactory("UnderfittedMembershipNFT");
+    const UnderfittedSocialClubMembership = await ethers.getContractFactory("UnderfittedSocialClubMembership");
 
-    const contract = await UnderfittedMembershipNFT.deploy();
+    const contract = await UnderfittedSocialClubMembership.deploy();
 
     console.log("Contract address:", contract.address);
 }

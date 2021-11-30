@@ -7,8 +7,9 @@ describe("UnderfittedSocialClubMembershipMock", () => {
     runTests(
         "UnderfittedSocialClubMembershipMock",
         10,
-        3,
+        4,
         BigNumber.from("500000000000000"),
-        BigNumber.from("50000000000000")
+        BigNumber.from("50000000000000"),
+        2
     );
 });

@@ -64,6 +64,9 @@ describe("UnderfittedSocialClubMembershipMock", () => {
         await expect(contract.ownerOf(0)).to.be.revertedWith(
             "VM Exception while processing transaction: reverted with reason string 'ERC721: owner query for nonexistent token'"
         );
+
+        // Expect getting the owner of token 1 to not fail
+        await expect(contract.ownerOf(1)).to.not.be.reverted;
     });
 
     it("should mint only MAX_SUPPLY tokens", async () => {

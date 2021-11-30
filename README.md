@@ -35,13 +35,19 @@ The tests for the smart contract are in [test/UnderfittedMembershipNFT.test.js](
 To run the tests:
 
 ```
-npm run test:light
+npm run test
 ```
 
 To create the coverage report:
 
 ```
-npm run test
+npm run coverage
+```
+
+To run the gas price estimation:
+
+```
+npm run gas
 ```
 
 ## Deploy

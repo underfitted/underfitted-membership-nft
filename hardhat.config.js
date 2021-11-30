@@ -17,4 +17,7 @@ module.exports = {
     etherscan: {
         apiKey: EHTERSCAN_KEY,
     },
+    gasReporter: {
+        enabled: process.env.REPORT_GAS ? true : false,
+    },
 };

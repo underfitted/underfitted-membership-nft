@@ -69,7 +69,7 @@ contract UnderfittedSocialClubMembership is ERC721, Pausable, Ownable {
 
     function mint() external payable {
         require(_tokenIdCounter.current() < MAX_SUPPLY(), "Sold out");
-        require(msg.value == getPrice(), "Incorrect price");
+        require(msg.value >= getPrice(), "Incorrect price");
         require(
             msg.sender == owner() || balanceOf(msg.sender) == 0,
             "Only one token per wallet allowed"

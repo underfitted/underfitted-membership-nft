@@ -9,6 +9,7 @@
         "gas": "REPORT_GAS=1 hardhat test",
         "coverage": "hardhat coverage",
         "deploy:mumbai": "npx hardhat run scripts/deploy.js --network mumbai",
+        "deploy:mock:mumbai": "npx hardhat run scripts/deployMock.js --network mumbai",
         "deploy:verify": "npx hardhat verify --network mumbai"
     },
     "author": "Underfitted Social Club",

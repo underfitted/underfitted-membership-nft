@@ -9,7 +9,7 @@ describe("UnderfittedMembershipNFT", () => {
 
     beforeEach(async function () {
         UnderfittedMembershipNFT = await ethers.getContractFactory("UnderfittedMembershipNFT");
-        [owner, addr1, addr2] = await ethers.getSigners();
+        [owner, addr1] = await ethers.getSigners();
 
         contract = await UnderfittedMembershipNFT.deploy();
 
@@ -30,73 +30,69 @@ describe("UnderfittedMembershipNFT", () => {
 
     it("should mint the reserved supply to the owner when deployed", async () => {
         expect(await contract.totalSupply()).to.equal(reservedSupply);
+        expect(await contract.ownerOf(1)).to.equal(owner.address);
         expect(await contract.balanceOf(owner.address)).to.equal(reservedSupply);
     });
 
     it("should have correct baseURI", async () => {
         await contract.mint();
 
-        expect(await contract.tokenURI(0)).to.equal("ipfs://QmSeYu1FZ7cp4mUZHk688BEa2Qiw4YySekhhVTG7Nhr4mP/0");
+        expect(await contract.tokenURI(1)).to.equal("ipfs://QmSeYu1FZ7cp4mUZHk688BEa2Qiw4YySekhhVTG7Nhr4mP/1");
     });
 
     it("should mint a token", async () => {
-        await contract.mint();
+        await contract.connect(addr1).mint({ value: await contract.getPrice() });
 
         expect(await contract.totalSupply()).to.equal(reservedSupply + 1);
-        expect(await contract.balanceOf(owner.address)).to.equal(reservedSupply + 1);
-        expect(await contract.ownerOf(reservedSupply)).to.equal(owner.address);
-
-        await contract.connect(addr1).mint();
-        expect(await contract.totalSupply()).to.equal(reservedSupply + 2);
         expect(await contract.balanceOf(addr1.address)).to.equal(1);
         expect(await contract.ownerOf(reservedSupply + 1)).to.equal(addr1.address);
     });
 
+    it("should start counting tokens from 1", async () => {
+        // Expect getting the owner of token 0 to fail
+        await expect(contract.ownerOf(0)).to.be.revertedWith(
+            "VM Exception while processing transaction: reverted with reason string 'ERC721: owner query for nonexistent token'"
+        );
+    });
+
     it("should mint only MAX_SUPPLY tokens", async () => {
+        // Mint all available tokens
         for (let i = reservedSupply; i < (await contract.MAX_SUPPLY()); i++) {
             await contract.mint({ value: await contract.getPrice() });
         }
 
-        try {
-            await contract.mint({ value: await contract.getPrice() });
-            expect.fail("Should not allow to mint more than MAX_SUPPLY");
-        } catch (error) {
-            expect(error.message).to.equal(
-                "VM Exception while processing transaction: reverted with reason string 'Sold out'"
-            );
-        }
+        // Expect next mint to fail
+        await expect(contract.mint({ value: await contract.getPrice() })).to.be.revertedWith(
+            "VM Exception while processing transaction: reverted with reason string 'Sold out'"
+        );
     });
 
     it("should pause the contract", async () => {
+        // Pause the minting
         await contract.pause();
         expect(await contract.paused()).to.equal(true);
 
-        try {
-            await contract.mint();
-            expect.fail("Should not allow to mint when paused");
-        } catch (error) {
-            expect(error.message).to.equal(
-                "VM Exception while processing transaction: reverted with reason string 'Pausable: paused'"
-            );
-        }
+        // Expect minting to fail
+        await expect(contract.mint({ value: await contract.getPrice() })).to.be.revertedWith(
+            "VM Exception while processing transaction: reverted with reason string 'Pausable: paused'"
+        );
     });
 
     it("should unpause the contract", async () => {
+        // Pause and unpause the contract
         await contract.pause();
         await contract.unpause();
-        await contract.mint();
+
+        // Minting should work
+        await contract.mint({ value: await contract.getPrice() });
         expect(await contract.paused()).to.equal(false);
     });
 
     it("should raise error when price is wrong", async () => {
-        try {
-            await contract.mint({ value: (await contract.getPrice()) + 1 });
-            expect.fail("Should not allow to mint with wrong price");
-        } catch (error) {
-            expect(error.message).to.equal(
-                "VM Exception while processing transaction: reverted with reason string 'Incorrect price'"
-            );
-        }
+        // Expect minting with wrong price to fail
+        await expect(contract.mint({ value: (await contract.getPrice()) + 1 })).to.be.revertedWith(
+            "VM Exception while processing transaction: reverted with reason string 'Incorrect price'"
+        );
     });
 
     it("should set the correct price", async () => {
@@ -151,18 +147,15 @@ describe("UnderfittedMembershipNFT", () => {
     });
 
     it("should withdraw proceeds only to the owner", async () => {
-        try {
-            await contract.connect(addr1).withdraw();
-            expect.fail("Should not allow withdraw for someone else");
-        } catch (error) {
-            expect(error.message).to.equal(
-                "VM Exception while processing transaction: reverted with reason string 'Ownable: caller is not the owner'"
-            );
-        }
+        // Expect withdrawing from another address to fail
+        await expect(contract.connect(addr1).withdraw()).to.be.revertedWith(
+            "VM Exception while processing transaction: reverted with reason string 'Ownable: caller is not the owner'"
+        );
     });
 
     it("should return max supply, total supply and price", async () => {
         const [maxSupply, totalSupply, price] = await contract.getSupplyAndPrice();
+
         expect(maxSupply).to.equal(await contract.MAX_SUPPLY());
         expect(totalSupply).to.equal(await contract.totalSupply());
         expect(price).to.equal(await contract.getPrice());

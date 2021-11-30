@@ -32,10 +32,16 @@ npm run build
 
 The tests for the smart contract are in [test/UnderfittedMembershipNFT.test.js](/test/UnderfittedMembershipNFT.test.js).
 
-To run the tests:
+To run the quick tests (only the small mock contract):
 
 ```
 npm run test
+```
+
+To run the full test suite:
+
+```
+npm run test:full
 ```
 
 To create the coverage report:

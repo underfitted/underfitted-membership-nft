@@ -4,7 +4,8 @@
     "description": "Smart contract for the Underfitted Membership NFT token",
     "scripts": {
         "build": "hardhat compile",
-        "test": "hardhat test",
+        "test": "hardhat test test/UnderfittedSocialClubMembershipMock.test.js",
+        "test:full": "hardhat test",
         "gas": "REPORT_GAS=1 hardhat test",
         "coverage": "hardhat coverage",
         "deploy:mumbai": "npx hardhat run scripts/deploy.js --network mumbai",

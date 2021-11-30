@@ -107,17 +107,18 @@ describe("UnderfittedSocialClubMembershipMock", () => {
     });
 
     it("should set the correct price", async () => {
-        for (let i = reservedSupply; i < (await contract.MAX_SUPPLY()); i++) {
-            // Calculate the expected price
-            const totalSupply = await contract.totalSupply();
-            const expectedPrice = (500000 + (totalSupply - reservedSupply) * 50000) * 1e9;
+        // Price is equal to the base price after deployment
+        const basePrice = await contract.BASE_PRICE();
+        const priceFactor = await contract.PRICE_FACTOR();
+        expect(await contract.getPrice()).to.equal(basePrice);
 
-            // Compare to the actual price
-            expect((await contract.getPrice()).toNumber()).to.equal(expectedPrice);
+        // Price increases by 1x price factor after one mint
+        await contract.mint({ value: await contract.getPrice() });
+        expect(await contract.getPrice()).to.equal(basePrice.add(priceFactor));
 
-            // Mint another token
-            await contract.mint({ value: await contract.getPrice() });
-        }
+        // Price increases by 2x price factor after one mint
+        await contract.mint({ value: await contract.getPrice() });
+        expect(await contract.getPrice()).to.equal(basePrice.add(priceFactor.mul(2)));
     });
 
     it("should store proceeds", async () => {

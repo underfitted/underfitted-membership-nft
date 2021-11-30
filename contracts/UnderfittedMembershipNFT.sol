@@ -19,9 +19,9 @@ contract UnderfittedMembershipNFT is ERC721, Pausable, Ownable {
     uint256 public constant SUPPLY_LIMIT_3 = 9;
 
     uint256 public constant SUPPLY_PRICE_0 = 0;
-    uint256 public constant SUPPLY_PRICE_1 = 50000 gwei;
-    uint256 public constant SUPPLY_PRICE_2 = 70000 gwei;
-    uint256 public constant SUPPLY_PRICE_3 = 90000 gwei;
+    uint256 public constant SUPPLY_PRICE_1 = 500000 gwei;
+    uint256 public constant SUPPLY_PRICE_2 = 700000 gwei;
+    uint256 public constant SUPPLY_PRICE_3 = 900000 gwei;
 
     constructor() ERC721("Underfitted Membership NFT", "UNDERFITTED") {
         for (uint256 i = 0; i < RESERVED_SUPPLY; i++) {
@@ -74,6 +74,10 @@ contract UnderfittedMembershipNFT is ERC721, Pausable, Ownable {
     function mint() public payable {
         require(_tokenIdCounter.current() < MAX_SUPPLY, "Sold out");
         require(msg.value == getPrice(), "Incorrect price");
+        require(
+            msg.sender == owner() || balanceOf(msg.sender) == 0,
+            "Only one token per wallet allowed"
+        );
 
         _tokenIdCounter.increment();
         _safeMint(msg.sender, _tokenIdCounter.current());

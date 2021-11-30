@@ -134,10 +134,13 @@ describe("UnderfittedMembershipNFT", () => {
     it("should withdraw proceeds", async () => {
         const ownerBalance = await ethers.provider.getBalance(owner.address);
 
-        // Mint the free supply + 1 from another address
+        // Mint the free supply from the owner
         for (let i = reservedSupply; i < (await contract.SUPPLY_LIMIT_1()).add(1); i++) {
-            await contract.connect(addr1).mint({ value: await contract.getPrice() });
+            await contract.mint({ value: await contract.getPrice() });
         }
+
+        // Mint one from another wallet
+        await contract.connect(addr1).mint({ value: await contract.getPrice() });
 
         // Withdraw the proceeds
         await contract.withdraw();
@@ -159,5 +162,15 @@ describe("UnderfittedMembershipNFT", () => {
         expect(maxSupply).to.equal(await contract.MAX_SUPPLY());
         expect(totalSupply).to.equal(await contract.totalSupply());
         expect(price).to.equal(await contract.getPrice());
+    });
+
+    it("should allow only one token per non-owner wallet", async () => {
+        // Minting one token should work
+        await contract.connect(addr1).mint({ value: await contract.getPrice() });
+
+        // Minting another token should fail
+        await expect(contract.connect(addr1).mint({ value: await contract.getPrice() })).to.be.revertedWith(
+            "VM Exception while processing transaction: reverted with reason string 'Only one token per wallet allowed'"
+        );
     });
 });

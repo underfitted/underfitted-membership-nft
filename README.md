@@ -72,5 +72,16 @@ npm run deploy:verify -- <smart contract address>
 
 ## Example
 
+### Smart contract
+
 The contract is deployed on the Polygon Mumbai test chain:
-[https://mumbai.polygonscan.com/address/0x027BC7FeF62c2b064A939EEb57CD4109f1Adb1E3](https://mumbai.polygonscan.com/address/0x027BC7FeF62c2b064A939EEb57CD4109f1Adb1E3)
+
+-   Full contract (all 1000 NFTs): [https://mumbai.polygonscan.com/address/0x56BF26F05A469116639e8B382141b26a00f3676f](https://mumbai.polygonscan.com/address/0x56BF26F05A469116639e8B382141b26a00f3676f)
+-   Mock contract (only 10 NFTs): [https://mumbai.polygonscan.com/address/0x84FE583a401015B4Ba32eA5982d6953957F5f9Db](https://mumbai.polygonscan.com/address/0x84FE583a401015B4Ba32eA5982d6953957F5f9Db)
+
+### OpenSea collection
+
+The OpenSea collection can be found here:
+
+-   Full contract: [https://testnets.opensea.io/collection/underfitted-social-club-membership-v3](https://testnets.opensea.io/collection/underfitted-social-club-membership-v3)
+-   Mock contract: [https://testnets.opensea.io/collection/underfitted-social-club-membership-v4](https://testnets.opensea.io/collection/underfitted-social-club-membership-v4)

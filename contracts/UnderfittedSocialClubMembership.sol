@@ -31,10 +31,14 @@ contract UnderfittedSocialClubMembership is ERC721, Pausable, Ownable {
         return 10;
     }
 
-    constructor() ERC721("Underfitted Social Club Membership", "UNDERFITTED") {
+    constructor(address treasury)
+        ERC721("Underfitted Social Club Membership", "UNDERFITTED")
+    {
+        transferOwnership(treasury);
+
         for (uint256 i = 0; i < RESERVED_SUPPLY(); i++) {
             _tokenIdCounter.increment();
-            _safeMint(msg.sender, _tokenIdCounter.current());
+            _safeMint(treasury, _tokenIdCounter.current());
         }
     }
 
@@ -86,7 +90,7 @@ contract UnderfittedSocialClubMembership is ERC721, Pausable, Ownable {
     }
 
     function withdraw() external onlyOwner {
-        address payable recipient = payable(address(msg.sender));
+        address payable recipient = payable(msg.sender);
         recipient.transfer(address(this).balance);
     }
 

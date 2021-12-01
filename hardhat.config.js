@@ -11,12 +11,19 @@ module.exports = {
     networks: {
         hardhat: {
             accounts: [
+                // Owner account
                 {
                     privateKey: "0x0000000000000000000000000000000000000000000000000000000000000001",
                     balance: "100000000000000000000000",
                 },
+                // Treasury account
                 {
                     privateKey: "0x0000000000000000000000000000000000000000000000000000000000000002",
+                    balance: "100000000000000000000000",
+                },
+                // Other test account
+                {
+                    privateKey: "0x0000000000000000000000000000000000000000000000000000000000000003",
                     balance: "100000000000000000000000",
                 },
             ],
@@ -31,5 +38,8 @@ module.exports = {
     },
     gasReporter: {
         enabled: process.env.REPORT_GAS ? true : false,
+    },
+    treasury: {
+        mumbai: 0x9fecc154aba86db310cc3a81bb65f81155d6bf98,
     },
 };

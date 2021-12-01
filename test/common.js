@@ -13,13 +13,14 @@ module.exports = {
         let UnderfittedSocialClubMembershipMock;
         let contract;
         let owner;
+        let treasury;
         let addr1;
 
         beforeEach(async function () {
             UnderfittedSocialClubMembershipMock = await ethers.getContractFactory(contractName);
-            [owner, addr1] = await ethers.getSigners();
+            [owner, treasury, addr1] = await ethers.getSigners();
 
-            contract = await UnderfittedSocialClubMembershipMock.deploy();
+            contract = await UnderfittedSocialClubMembershipMock.deploy(treasury.address);
 
             reservedSupply = (await contract.RESERVED_SUPPLY()).toNumber();
         });
@@ -32,14 +33,18 @@ module.exports = {
             expect(await contract.PRICE_STEP()).to.equal(expectedPriceStep);
         });
 
+        it("should have the owner account set correctly", async () => {
+            expect(await contract.owner()).to.equal(treasury.address);
+        });
+
         it("should return the total supply", async () => {
             expect(await contract.totalSupply()).to.equal(reservedSupply);
         });
 
-        it("should mint the reserved supply to the owner when deployed", async () => {
+        it("should mint the reserved supply to the treasury when deployed", async () => {
             expect(await contract.totalSupply()).to.equal(reservedSupply);
-            expect(await contract.ownerOf(1)).to.equal(owner.address);
-            expect(await contract.balanceOf(owner.address)).to.equal(reservedSupply);
+            expect(await contract.ownerOf(1)).to.equal(treasury.address);
+            expect(await contract.balanceOf(treasury.address)).to.equal(reservedSupply);
         });
 
         it("should have correct baseURI", async () => {
@@ -67,7 +72,7 @@ module.exports = {
         it("should mint only MAX_SUPPLY tokens", async () => {
             // Mint all available tokens
             for (let i = reservedSupply; i < (await contract.MAX_SUPPLY()); i++) {
-                await contract.mint({ value: await contract.getPrice() });
+                await contract.connect(treasury).mint({ value: await contract.getPrice() });
             }
 
             // Expect next mint to fail
@@ -78,7 +83,7 @@ module.exports = {
 
         it("should pause the contract", async () => {
             // Pause the minting
-            await contract.pause();
+            await contract.connect(treasury).pause();
             expect(await contract.paused()).to.equal(true);
 
             // Expect minting to fail
@@ -89,8 +94,8 @@ module.exports = {
 
         it("should unpause the contract", async () => {
             // Pause and unpause the contract
-            await contract.pause();
-            await contract.unpause();
+            await contract.connect(treasury).pause();
+            await contract.connect(treasury).unpause();
 
             // Minting should work
             await contract.mint({ value: await contract.getPrice() });
@@ -99,15 +104,18 @@ module.exports = {
 
         it("should raise error when price is wrong", async () => {
             // Expect minting with lower price to fail
-            await expect(contract.mint({ value: (await contract.getPrice()).sub(1) })).to.be.revertedWith(
+            await expect(
+                contract.connect(addr1).mint({ value: (await contract.getPrice()).sub(1) })
+            ).to.be.revertedWith(
                 "VM Exception while processing transaction: reverted with reason string 'Incorrect price'"
             );
 
             // Expect minting with higher price to pass
-            await expect(contract.mint({ value: (await contract.getPrice()).add(1) })).to.not.be.reverted;
+            await expect(contract.connect(treasury).mint({ value: (await contract.getPrice()).add(1) })).to.not.be
+                .reverted;
 
             // Expect minting with exact price to pass
-            await expect(contract.mint({ value: await contract.getPrice() })).to.not.be.reverted;
+            await expect(contract.connect(treasury).mint({ value: await contract.getPrice() })).to.not.be.reverted;
         });
 
         it("should set the correct price", async () => {
@@ -119,19 +127,19 @@ module.exports = {
             // The price is equal to the base price for the first price step after deployment
             for (let i = 1; i <= priceStep; i++) {
                 expect(await contract.getPrice()).to.equal(basePrice);
-                await contract.mint({ value: await contract.getPrice() });
+                await contract.connect(treasury).mint({ value: await contract.getPrice() });
             }
 
             // Price increases by 1x price factor for the next price step
             for (let i = 1; i <= priceStep; i++) {
                 expect(await contract.getPrice()).to.equal(basePrice.add(priceFactor));
-                await contract.mint({ value: await contract.getPrice() });
+                await contract.connect(treasury).mint({ value: await contract.getPrice() });
             }
 
             // Price increases by 2x price factor for the next price step
             for (let i = 1; i <= priceStep; i++) {
                 expect(await contract.getPrice()).to.equal(basePrice.add(priceFactor.mul(2)));
-                await contract.mint({ value: await contract.getPrice() });
+                await contract.connect(treasury).mint({ value: await contract.getPrice() });
             }
         });
 
@@ -148,23 +156,33 @@ module.exports = {
         });
 
         it("should withdraw proceeds", async () => {
-            const ownerBalance = await ethers.provider.getBalance(owner.address);
+            // Get the treasury balance
+            const treasuryBalance = await ethers.provider.getBalance(treasury.address);
 
             // Mint one paid token
+            const price = await contract.getPrice();
             await contract.connect(addr1).mint({ value: await contract.getPrice() });
 
             // Withdraw the proceeds
-            await contract.withdraw();
+            await contract.connect(treasury).withdraw();
 
-            // New balance should be greater than the old one
-            expect(await ethers.provider.getBalance(owner.address)).to.gt(ownerBalance);
+            // The treasury balance should increase (price last mint - gas fees)
+            expect(await ethers.provider.getBalance(treasury.address)).to.gt(treasuryBalance);
         });
 
-        it("should withdraw proceeds only to the owner", async () => {
+        it("should withdraw proceeds only to the treasury", async () => {
             // Expect withdrawing from another address to fail
             await expect(contract.connect(addr1).withdraw()).to.be.revertedWith(
                 "VM Exception while processing transaction: reverted with reason string 'Ownable: caller is not the owner'"
             );
+
+            // Expect withdrawing from the original owner address to fail
+            await expect(contract.connect(owner).withdraw()).to.be.revertedWith(
+                "VM Exception while processing transaction: reverted with reason string 'Ownable: caller is not the owner'"
+            );
+
+            // Expect withdrawing from the treasury address to pass
+            await expect(contract.connect(treasury).withdraw()).to.not.be.reverted;
         });
 
         it("should return max supply, total supply and price", async () => {

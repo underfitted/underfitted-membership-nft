@@ -25,4 +25,6 @@ contract UnderfittedSocialClubMembershipMock is
     function PRICE_STEP() public pure override returns (uint256) {
         return 2;
     }
+
+    constructor(address treasury) UnderfittedSocialClubMembership(treasury) {}
 }

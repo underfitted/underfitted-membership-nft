@@ -24,7 +24,11 @@ contract UnderfittedSocialClubMembership is ERC721, Pausable, Ownable {
     }
 
     function PRICE_FACTOR() public pure virtual returns (uint256) {
-        return 69000000 gwei;
+        return 690000000 gwei;
+    }
+
+    function PRICE_STEP() public pure virtual returns (uint256) {
+        return 10;
     }
 
     constructor() ERC721("Underfitted Social Club Membership", "UNDERFITTED") {
@@ -44,7 +48,9 @@ contract UnderfittedSocialClubMembership is ERC721, Pausable, Ownable {
 
     function getPrice() public view returns (uint256) {
         return
-            BASE_PRICE() + (totalSupply() - RESERVED_SUPPLY()) * PRICE_FACTOR();
+            BASE_PRICE() +
+            ((totalSupply() - RESERVED_SUPPLY()) / PRICE_STEP()) *
+            PRICE_FACTOR();
     }
 
     function getSupplyAndPrice()

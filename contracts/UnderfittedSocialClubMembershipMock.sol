@@ -11,7 +11,7 @@ contract UnderfittedSocialClubMembershipMock is
     }
 
     function RESERVED_SUPPLY() public pure override returns (uint256) {
-        return 3;
+        return 4;
     }
 
     function BASE_PRICE() public pure override returns (uint256) {
@@ -20,5 +20,9 @@ contract UnderfittedSocialClubMembershipMock is
 
     function PRICE_FACTOR() public pure override returns (uint256) {
         return 50000 gwei;
+    }
+
+    function PRICE_STEP() public pure override returns (uint256) {
+        return 2;
     }
 }

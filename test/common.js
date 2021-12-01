@@ -7,7 +7,8 @@ module.exports = {
         expectedMaxSupply,
         expectedReservedSupply,
         expectedBasePrice,
-        expectedPriceFactor
+        expectedPriceFactor,
+        expectedPriceStep
     ) {
         let UnderfittedSocialClubMembershipMock;
         let contract;
@@ -28,6 +29,7 @@ module.exports = {
             expect(await contract.RESERVED_SUPPLY()).to.equal(expectedReservedSupply);
             expect(await contract.BASE_PRICE()).to.equal(expectedBasePrice);
             expect(await contract.PRICE_FACTOR()).to.equal(expectedPriceFactor);
+            expect(await contract.PRICE_STEP()).to.equal(expectedPriceStep);
         });
 
         it("should return the total supply", async () => {
@@ -112,15 +114,25 @@ module.exports = {
             // Price is equal to the base price after deployment
             const basePrice = await contract.BASE_PRICE();
             const priceFactor = await contract.PRICE_FACTOR();
-            expect(await contract.getPrice()).to.equal(basePrice);
+            const priceStep = await contract.PRICE_STEP();
 
-            // Price increases by 1x price factor after one mint
-            await contract.mint({ value: await contract.getPrice() });
-            expect(await contract.getPrice()).to.equal(basePrice.add(priceFactor));
+            // The price is equal to the base price for the first price step after deployment
+            for (let i = 1; i <= priceStep; i++) {
+                expect(await contract.getPrice()).to.equal(basePrice);
+                await contract.mint({ value: await contract.getPrice() });
+            }
 
-            // Price increases by 2x price factor after one mint
-            await contract.mint({ value: await contract.getPrice() });
-            expect(await contract.getPrice()).to.equal(basePrice.add(priceFactor.mul(2)));
+            // Price increases by 1x price factor for the next price step
+            for (let i = 1; i <= priceStep; i++) {
+                expect(await contract.getPrice()).to.equal(basePrice.add(priceFactor));
+                await contract.mint({ value: await contract.getPrice() });
+            }
+
+            // Price increases by 2x price factor for the next price step
+            for (let i = 1; i <= priceStep; i++) {
+                expect(await contract.getPrice()).to.equal(basePrice.add(priceFactor.mul(2)));
+                await contract.mint({ value: await contract.getPrice() });
+            }
         });
 
         it("should store proceeds", async () => {

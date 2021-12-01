@@ -1,12 +1,20 @@
 async function main() {
+    const treasury = process.env.TREASURY;
+
+    if (!treasury) {
+        console.log("No treasury specified");
+        throw new Error("No treasury specified");
+    }
+
     const [deployer] = await ethers.getSigners();
 
     console.log("Deploying contracts with the account:", deployer.address);
     console.log("Account balance:", (await deployer.getBalance()).toString());
+    console.log("Treasury account:", treasury);
 
     const UnderfittedSocialClubMembership = await ethers.getContractFactory("UnderfittedSocialClubMembership");
 
-    const contract = await UnderfittedSocialClubMembership.deploy();
+    const contract = await UnderfittedSocialClubMembership.deploy(treasury);
 
     console.log("Contract address:", contract.address);
 }

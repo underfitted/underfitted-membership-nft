@@ -67,7 +67,7 @@ npm run deploy:mumbai
 To verify the smart contract:
 
 ```
-npm run deploy:verify -- <smart contract address> <treasury address>
+npm run verify:mumbai -- <smart contract address> <treasury address>
 ```
 
 ## Example
@@ -76,12 +76,10 @@ npm run deploy:verify -- <smart contract address> <treasury address>
 
 The contract is deployed on the Polygon Mumbai test chain:
 
--   Full contract (all 1000 NFTs): [https://mumbai.polygonscan.com/address/0x7670d6b0B654Ff4596a9CEfaBD77fd289d36fc17](https://mumbai.polygonscan.com/address/0x7670d6b0B654Ff4596a9CEfaBD77fd289d36fc17)
--   Mock contract (only 10 NFTs): [https://mumbai.polygonscan.com/address/0xab6Ce24ddcf4008EAc00E4061306a5Df1b30ECF7](https://mumbai.polygonscan.com/address/0xab6Ce24ddcf4008EAc00E4061306a5Df1b30ECF7)
+-   Full contract (all 1000 NFTs): [https://polygonscan.com/address/0xa1f1a1d644ae2ef075cfab4416f9350d1cced5e6](https://polygonscan.com/address/0xa1f1a1d644ae2ef075cfab4416f9350d1cced5e6)
 
 ### OpenSea collection
 
 The OpenSea collection can be found here:
 
--   Full contract: [https://testnets.opensea.io/collection/underfitted-social-club-membership-jfs6xay5lj](https://testnets.opensea.io/collection/underfitted-social-club-membership-jfs6xay5lj)
--   Mock contract: [https://testnets.opensea.io/collection/underfitted-social-club-membership-vlkwhlqhqk](https://testnets.opensea.io/collection/underfitted-social-club-membership-vlkwhlqhqk)
+-   Full contract: [https://opensea.io/collection/underfitted-social-club-membership](https://opensea.io/collection/underfitted-social-club-membership)

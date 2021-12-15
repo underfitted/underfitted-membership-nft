@@ -4,6 +4,7 @@ from pathlib import Path
 import random
 import os
 import numpy as np
+import json
 
 
 COLOR_PALETTE_POOL = [
@@ -998,6 +999,7 @@ COLOR_PALETTE_POOL = [
     ["a8ab9b", "172a38", "ec4b5d", "f48773", "e0c590"],
 ]
 
+
 def load_doodles_from_directory(directory):
     files = []
     for filename in sorted(os.listdir(directory)):
@@ -1006,20 +1008,31 @@ def load_doodles_from_directory(directory):
 
     return files
 
-def screenshot(
-    driver, number, rotatey, rotatez, rotategrad, color1, color2, color3, doodle, rare
+
+def create_element(
+    driver, number, rotategrad, color1, color2, color3, doodle, rare, doodle_metadata
 ):
+    # Create the page
     page_path = Path("card/template/index.html")
-    page_url = f"file://{page_path.resolve()}?number={number}&rotatey={rotatey}&rotatez={rotatez}&rotategrad={rotategrad}&color1={color1}&color2={color2}&color3={color3}&doodle={doodle}&rare={rare}"
+    page_url = f"file://{page_path.resolve()}?number={number}&rotategrad={rotategrad}&color1={color1}&color2={color2}&color3={color3}&doodle={doodle}&rare={rare}"
     print(page_url)
 
+    # Screenshot the result
     driver.get(page_url)
-
     element = driver.find_element_by_id("main-element")
-    element.screenshot(f"card/images/{number:03d}-{doodle}")
+    element.screenshot(f"card/images/{number:03d}")
+
+    # Create the metadata
+    metadata = dict()
+    metadata["name"] = f"Underfitted Social Club Member Card #{number:03d}"
+    metadata["description"] = " Underfitted Social Club is a community of people passionate about machine learning. Our mission is to decentralize the machine learning field, enabling individuals to contribute, make an impact, and directly benefit from their contributions. "
+    metadata["image"] = "{number:03d}.png"
+    metadata["attributes"] = doodle_metadata
+    with open(f"card/metadata/{number:03d}", "w") as metadata_file:
+        json.dump(metadata, metadata_file)
 
 
-def rare(driver):
+def rare(driver, doodles_metadata):
     files = [
         "A tribute to CryptoPunk _7804.png",
         "A tribute to BAYC.png",
@@ -1036,28 +1049,28 @@ def rare(driver):
     for i, file in enumerate(files):
         random.seed(i)
 
-        rotatey = random.randint(-20, 20)
-        rotatez = random.randint(-10, 10)
         rotategrad = random.randint(0, 359)
 
         palette = random.sample(COLOR_PALETTE_POOL, 1)[0]
         random.shuffle(palette)
 
-        screenshot(
+        create_element(
             driver,
-            i + 1,
-            rotatey,
-            rotatez,
+            i,
             rotategrad,
             palette[0],
             palette[1],
             palette[2],
             file,
             file[:-4],
+            doodles_metadata[file[:-4]]
         )
 
 
 def main():
+    with open('card/pfp/metadata.json') as metadata_file:
+        doodles_metadata = json.load(metadata_file)
+
     chrome_options = Options()
     chrome_options.add_argument("--start-maximized")
     driver = webdriver.Chrome(
@@ -1067,13 +1080,11 @@ def main():
     doodles = load_doodles_from_directory("card/pfp/")
     np.random.shuffle(doodles)
 
-    rare(driver)
+    rare(driver, doodles_metadata)
 
     for i in range(10, 1000):
         random.seed(i * 42)
 
-        rotatey = random.randint(-20, 20)
-        rotatez = random.randint(-10, 10)
         rotategrad = random.randint(0, 359)
 
         doodle = np.random.choice(doodles, size=1, replace=False)[0]
@@ -1081,8 +1092,8 @@ def main():
         palette = random.sample(COLOR_PALETTE_POOL, 1)[0]
         random.shuffle(palette)
 
-        screenshot(
-            driver, i + 1, rotatey, rotatez, rotategrad, palette[0], palette[1], palette[2], doodle, ""
+        create_element(
+            driver, i, rotategrad, palette[0], palette[1], palette[2], doodle, "", doodles_metadata[doodle[:-4]]
         )
 
     driver.close()
